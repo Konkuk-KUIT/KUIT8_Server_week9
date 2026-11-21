@@ -1,0 +1,48 @@
+# CodeRabbit 리뷰 설정 — KUIT 8기 Server 9주차
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    - "!**/gradle/wrapper/**"
+    - "!**/gradlew"
+    - "!**/gradlew.bat"
+    - "!webapp/**"
+    - "!spring-mvc/src/main/resources/static/**"
+  path_instructions:
+    - path: "**/*.java"
+      instructions: |
+        학습용 미션 저장소입니다. 리뷰는 한국어 존댓말로, 정답 코드를 통째로 제시하지 말고 문제가 되는 이유와 방향을 설명해 주세요.
+        PR의 첫 커밋(`chore: 8주차 코드 이전`)은 8주차 코드를 옮긴 것이므로, 그 이후의 변경을 중심으로 리뷰해 주세요.
+    - path: "src/main/java/**"
+      instructions: |
+        1단계(Custom Tomcat 프론트 컨트롤러) 코드입니다. 다음을 중점적으로 확인해 주세요.
+        - URL 분기를 if/else나 switch로 하지 않고, (HTTP 메서드, 경로) 키의 Map으로 컨트롤러를 찾는지
+        - Map 키 객체가 equals/hashCode를 올바르게 갖는지 (record 또는 재정의)
+        - 매핑 → 정적 파일 → 404 순서로 처리하는지
+        - `/user/list.html`도 매핑에 등록되어 로그인 검사를 거치는지 (정적 파일로 빠져 로그인 없이 열리면 지적)
+        - 컨트롤러와 RequestMapper가 `WebServer.main()`에서 한 번만 만들어지고, 저장소를 생성자로 주입받는지
+        - 공유되는 컨트롤러 객체의 필드에 요청마다 달라지는 값을 저장하지 않는지
+    - path: "spring-mvc/src/main/java/**"
+      instructions: |
+        2단계(Spring Boot) 코드입니다. 다음을 중점적으로 확인해 주세요.
+        - 생성자 주입을 사용하는지 (이번 주는 Lombok 없이 생성자를 직접 작성)
+        - `getInstance()`나 직접 만든 싱글톤이 남아 있지 않은지
+        - `javax.servlet`이 아닌 `jakarta.servlet`을 사용하는지
+        - 쿠키에 `setPath("/")`가 있는지, `getCookies()`의 null을 처리하는지
+        - `/api/users` 응답에 비밀번호가 포함되지 않는지, 쿠키가 없을 때 401을 응답하는지
+        - `@Controller`와 `@RestController`의 반환값 차이를 이해하고 사용했는지
+        - 컴포넌트 스캔 범위(@SpringBootApplication 패키지 하위)에 클래스가 있는지
+    - path: "**/src/test/java/**"
+      instructions: |
+        테스트 코드입니다. 정상 경로뿐 아니라 404, 로그인하지 않은 접근 같은 실패 경로도 검증하는지 확인해 주세요. 본인 컴퓨터의 절대 경로를 쓰지 않는지도 확인해 주세요.
+
+chat:
+  auto_reply: true
