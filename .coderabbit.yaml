@@ -14,14 +14,14 @@ reviews:
     - "!**/gradle/wrapper/**"
     - "!**/gradlew"
     - "!**/gradlew.bat"
-    - "!webapp/**"
+    - "!custom-tomcat/webapp/**"
     - "!spring-mvc/src/main/resources/static/**"
   path_instructions:
     - path: "**/*.java"
       instructions: |
         학습용 미션 저장소입니다. 리뷰는 한국어 존댓말로, 정답 코드를 통째로 제시하지 말고 문제가 되는 이유와 방향을 설명해 주세요.
-        PR의 첫 커밋(`chore: 8주차 코드 이전`)은 8주차 코드를 옮긴 것이므로, 그 이후의 변경을 중심으로 리뷰해 주세요.
-    - path: "src/main/java/**"
+        PR의 첫 커밋(`chore: 8주차 코드 이전`)은 8주차 코드를 `custom-tomcat/`으로 옮긴 것이므로, 그 이후의 변경을 중심으로 리뷰해 주세요. `spring-mvc/`의 시작 클래스와 빌드 설정은 제공된 코드입니다.
+    - path: "custom-tomcat/src/main/java/**"
       instructions: |
         1단계(Custom Tomcat 프론트 컨트롤러) 코드입니다. 다음을 중점적으로 확인해 주세요.
         - URL 분기를 if/else나 switch로 하지 않고, (HTTP 메서드, 경로) 키의 Map으로 컨트롤러를 찾는지

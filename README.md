@@ -30,7 +30,7 @@ cd KUIT8_Server_week9
 git switch -c YOUR_NICKNAME
 ```
 
-2. 본인의 **8주차 브랜치**에서 아래 파일과 폴더를 이 저장소의 **루트**로 복사합니다. `.gitignore`는 복사하지 않습니다.
+2. 본인의 **8주차 브랜치**에서 아래 파일과 폴더를 이 저장소의 **`custom-tomcat/` 폴더 안**으로 복사합니다. `.gitignore`와 README는 복사하지 않습니다.
 
 ```text
 src/  webapp/  build.gradle  settings.gradle  gradle/  gradlew  gradlew.bat
@@ -48,6 +48,7 @@ git commit -m "chore: 8주차 코드 이전"
 4. 8주차 기능이 그대로 동작하는지 확인합니다.
 
 ```bash
+cd custom-tomcat
 ./gradlew test
 ./gradlew run
 ```
@@ -57,20 +58,25 @@ git commit -m "chore: 8주차 코드 이전"
 ### 실행 환경
 
 - JDK 21 (8주차와 동일)
-- 1단계: 저장소 루트에서 `./gradlew run` → http://localhost:8080
+- 1단계: `custom-tomcat` 폴더에서 `./gradlew run` → http://localhost:8080
 - 2단계: `spring-mvc` 폴더에서 `./gradlew bootRun` → http://localhost:8080
+- 두 폴더는 서로 다른 Gradle 프로젝트입니다. IntelliJ에서는 각 폴더를 따로 엽니다.
 - Windows PowerShell에서는 `./gradlew.bat run`, `./gradlew.bat bootRun`, `./gradlew.bat test`를 사용합니다.
+- macOS/Linux에서 `permission denied`가 나면 해당 폴더에서 `chmod +x gradlew`를 먼저 실행합니다.
 - 1단계 서버와 2단계 서버는 같은 8080 포트를 쓰므로 **동시에 실행하지 않습니다.**
 
 ### 완성 후 저장소 구조
 
 ```text
 KUIT8_Server_week9/
-├── src/            # 1단계: 8주차 코드 + 프론트 컨트롤러
-├── webapp/         # 1단계: 실습 화면
-├── build.gradle    # 1단계 빌드 설정
-├── ...
-└── spring-mvc/     # 2단계: Spring Initializr로 만든 Spring Boot 프로젝트
+├── custom-tomcat/  # 1단계: 본인의 8주차 코드를 옮겨 와서 프론트 컨트롤러로 리팩토링
+│   ├── src/
+│   ├── webapp/
+│   └── build.gradle ...
+└── spring-mvc/     # 2단계: 제공된 Spring Boot 프로젝트 (Spring Web)
+    ├── src/main/java/kuit8th/springmvc/SpringMvcApplication.java
+    ├── src/main/resources/static/   # html·css를 옮길 곳
+    └── build.gradle ...
 ```
 
 ## 1단계 — 프론트 컨트롤러 만들기
@@ -98,31 +104,34 @@ KUIT8_Server_week9/
 
 ## 2단계 — Spring Boot로 옮기기
 
-- [ ] Spring Initializr로 `spring-mvc` 프로젝트를 만들고 html·css를 `src/main/resources/static`으로 옮기기
+- [ ] 제공된 `spring-mvc` 프로젝트를 실행하고, html·css를 `src/main/resources/static`으로 옮기기
 - [ ] `MemoryUserRepository`를 스프링 빈으로 등록하고 `getInstance()` 제거하기
 - [ ] `POST /user/signup` 회원가입
 - [ ] `POST /user/login` 로그인과 쿠키
 - [ ] `GET /api/users` 사용자 목록 API (쿠키가 없으면 401)
 - [ ] (선택) `GET /api/users/{userId}` 회원 한 명 조회
 
-### 프로젝트 생성
+### 제공된 Spring Boot 프로젝트
 
-[Spring Initializr](https://start.spring.io)에서 아래처럼 설정하고 **GENERATE**를 누릅니다. 받은 zip을 이 저장소 루트에 풀어 `spring-mvc/` 폴더가 생기게 합니다.
+`spring-mvc/`에는 **Spring Web 하나만 추가된 Spring Boot 프로젝트**가 준비되어 있습니다. 모두 같은 버전으로 시작하도록 미리 만들어 둔 것이니 Spring Initializr로 새로 만들지 마세요.
 
 | 항목 | 값 |
 | --- | --- |
-| Project | Gradle - Groovy |
-| Language | Java |
-| Spring Boot | 기본 선택된 버전 그대로 |
-| Group | `kuit8th` |
-| Artifact | `spring-mvc` |
-| Package name | `kuit8th.springmvc` |
-| Packaging | Jar |
-| Java | **21** |
-| Dependencies | **Spring Web** 하나만 |
+| Build | Gradle - Groovy |
+| Java | 21 |
+| Dependencies | Spring Web |
+| 패키지 | `kuit8th.springmvc` |
+| 시작 클래스 | `SpringMvcApplication` |
 
-- Spring Data JPA 같은 DB 의존성을 미리 넣으면 DB 설정이 없어서 서버가 실행되지 않습니다. DB는 10주차에서 추가합니다.
-- IntelliJ에서는 `spring-mvc` 폴더를 별도 프로젝트로 엽니다.
+```bash
+cd spring-mvc
+./gradlew bootRun
+```
+
+- 처음 실행하면 아직 정적 파일이 없어서 `http://localhost:8080/`이 404(Whitelabel Error Page)인 것이 정상입니다.
+- `custom-tomcat/webapp`의 html·css를 `spring-mvc/src/main/resources/static`으로 옮긴 뒤 다시 실행하면 index.html이 보여야 합니다.
+- 새 클래스는 `kuit8th.springmvc` 패키지 **아래**에 만듭니다. 그 밖에 두면 컴포넌트 스캔이 찾지 못합니다.
+- Spring Data JPA 같은 의존성은 추가하지 않습니다. DB는 10주차에서 추가합니다.
 - 이번 주는 Lombok 없이 생성자를 직접 작성합니다.
 - 서블릿 패키지는 `javax.servlet`이 아니라 `jakarta.servlet`입니다. 블로그 예제를 참고할 때 import를 확인하세요.
 - `user/list.html`은 `static`으로 **옮기지 않습니다.** `static`의 파일은 컨트롤러를 거치지 않아 로그인 검사를 할 수 없습니다.
@@ -146,6 +155,7 @@ curl -i --cookie "logined=true" http://localhost:8080/api/users
 ## 테스트
 
 ```bash
+cd custom-tomcat
 ./gradlew test
 ```
 
@@ -156,7 +166,7 @@ curl -i --cookie "logined=true" http://localhost:8080/api/users
 - 어디에도 없는 경로 → 404가 응답된다
 - 쿠키 없이 `GET /user/list.html` → `/user/login.html`로 302가 응답된다
 
-8주차에 제공된 테스트와 본인이 작성한 8주차 테스트도 계속 통과해야 합니다. 요청 예제 파일이 필요하면 `src/test/resources`에 두고 클래스패스로 읽습니다. 본인 컴퓨터의 절대 경로를 테스트에 넣지 마세요.
+8주차에 제공된 테스트와 본인이 작성한 8주차 테스트도 계속 통과해야 합니다. 요청 예제 파일이 필요하면 `custom-tomcat/src/test/resources`에 두고 클래스패스로 읽습니다. 본인 컴퓨터의 절대 경로를 테스트에 넣지 마세요.
 
 ## 제출 방법
 
