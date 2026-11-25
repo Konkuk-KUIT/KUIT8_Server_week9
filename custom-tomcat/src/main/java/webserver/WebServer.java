@@ -1,5 +1,8 @@
 package webserver;
 
+import db.MemoryUserRepository;
+import db.Repository;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,14 +23,18 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        Repository repository = new MemoryUserRepository();
+        RequestMapper requestMapper = new RequestMapper(repository);
+
         // TCP 환영 소켓
         try (ServerSocket welcomeSocket = new ServerSocket(port)){
 
             // 연결 소켓
             Socket connection;
+
             while ((connection = welcomeSocket.accept()) != null) {
                 // 스레드에 작업 전달
-                service.submit(new RequestHandler(connection));
+                service.submit(new RequestHandler(connection, requestMapper));
             }
         }
     }

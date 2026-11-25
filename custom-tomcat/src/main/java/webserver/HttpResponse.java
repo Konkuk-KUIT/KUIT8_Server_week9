@@ -7,15 +7,23 @@ import java.nio.file.Files;
 
 public class HttpResponse {
     private byte[] body;
+    private static final String DEFAULT_ROOT = "./custom-tomcat/webapp";
+
     private final DataOutputStream dos;
+    private final String root;
 
     public HttpResponse(DataOutputStream dos) {
+        this(dos, DEFAULT_ROOT);
+    }
+
+    public HttpResponse(DataOutputStream dos, String root) {
         this.dos = dos;
+        this.root = root;
     }
 
     //serverResource는 단순하게 path에 대한 resource를 serve만 하면 된다.
     public void serveResource(String path) throws IOException {
-        File webServer = new File(path);
+        File webServer = new File(root + path);
 
         if(webServer.exists() && webServer.isFile()){
             body = Files.readAllBytes(webServer.toPath());

@@ -12,7 +12,7 @@ public class MemoryUserRepository implements Repository{
     private static final MemoryUserRepository INSTANCE = new MemoryUserRepository();
     private final Map<String, User> users = new ConcurrentHashMap<>();
 
-    private MemoryUserRepository() {
+    public MemoryUserRepository() {
     }
 
     public static MemoryUserRepository getInstance() {

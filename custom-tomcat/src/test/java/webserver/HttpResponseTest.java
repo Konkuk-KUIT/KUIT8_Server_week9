@@ -27,9 +27,9 @@ class HttpResponseTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(out);
 
-        HttpResponse httpResponse = new HttpResponse(dos);
+        HttpResponse httpResponse = new HttpResponse(dos, tempdir.toString());
 
-        httpResponse.serveResource(file.toString());
+        httpResponse.serveResource("/index.html");
 
         String output = out.toString();
         assertThat(output).contains("HTTP/1.1 200 OK");
@@ -43,7 +43,7 @@ class HttpResponseTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(out);
 
-        HttpResponse httpResponse = new HttpResponse(dos);
+        HttpResponse httpResponse = new HttpResponse(dos, tempdir.toString());
 
         httpResponse.serveResource("/index.txt");
 
@@ -59,9 +59,9 @@ class HttpResponseTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(out);
 
-        HttpResponse httpResponse = new HttpResponse(dos);
+        HttpResponse httpResponse = new HttpResponse(dos, tempdir.toString());
 
-        httpResponse.redirect(file.toString());
+        httpResponse.redirect("/index.html");
 
         String output = out.toString();
         assertThat(output).contains("HTTP/1.1 302 OK");
