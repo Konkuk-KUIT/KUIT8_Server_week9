@@ -44,4 +44,12 @@ public class HttpResponse {
         dos.writeBytes("\r\n");
         dos.flush();
     }
+
+    public void notFound() throws IOException {
+        dos.writeBytes(HttpStatus.NOT_FOUND.statusLine());
+        dos.writeBytes("Content-Length: 0\r\n");
+        dos.writeBytes("Connection: close\r\n");
+        dos.writeBytes("\r\n");
+        dos.flush();
+    }
 }

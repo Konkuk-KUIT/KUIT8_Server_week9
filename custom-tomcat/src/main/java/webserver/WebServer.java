@@ -1,5 +1,8 @@
 package webserver;
 
+import controller.*;
+import http.HttpMethod;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,6 +23,23 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        RequestMapper mapper = new RequestMapper();
+
+        HomeController home = new HomeController();
+        mapper.register(HttpMethod.GET, "/", home);
+
+        SignUpController signUp = new SignUpController();
+        mapper.register(HttpMethod.GET, "/user/signup", signUp);
+        mapper.register(HttpMethod.POST, "/user/signup", signUp);
+
+        mapper.register(HttpMethod.POST, "/user/login", new LoginController());
+
+        ListController list = new ListController();
+        mapper.register(HttpMethod.GET, "/user/userList", list);
+        mapper.register(HttpMethod.GET, "/user/list.html", list);
+
+        StaticFileController staticFiles = new StaticFileController();
+
         // TCP 환영 소켓
         try (ServerSocket welcomeSocket = new ServerSocket(port)){
 
@@ -27,7 +47,7 @@ public class WebServer {
             Socket connection;
             while ((connection = welcomeSocket.accept()) != null) {
                 // 스레드에 작업 전달
-                service.submit(new RequestHandler(connection));
+                service.submit(new RequestHandler(connection, mapper, staticFiles));
             }
         }
 
