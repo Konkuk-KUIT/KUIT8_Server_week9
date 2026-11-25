@@ -1,6 +1,8 @@
 package webserver;
 
 import controller.*;
+import db.MemoryUserRepository;
+import db.Repository;
 import http.HttpMethod;
 
 import java.io.IOException;
@@ -23,22 +25,22 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
-        RequestMapper mapper = new RequestMapper();
+        Repository repository= MemoryUserRepository.getInstance();
 
         HomeController home = new HomeController();
-        mapper.register(HttpMethod.GET, "/", home);
+        SignUpController signUp = new SignUpController(repository);
+        ListController list = new ListController();
+        StaticFileController staticFiles = new StaticFileController();
 
-        SignUpController signUp = new SignUpController();
+        RequestMapper mapper = new RequestMapper();
+
+        mapper.register(HttpMethod.GET, "/", home);
         mapper.register(HttpMethod.GET, "/user/signup", signUp);
         mapper.register(HttpMethod.POST, "/user/signup", signUp);
-
-        mapper.register(HttpMethod.POST, "/user/login", new LoginController());
-
-        ListController list = new ListController();
+        mapper.register(HttpMethod.POST, "/user/login", new LoginController(repository));
         mapper.register(HttpMethod.GET, "/user/userList", list);
         mapper.register(HttpMethod.GET, "/user/list.html", list);
 
-        StaticFileController staticFiles = new StaticFileController();
 
         // TCP 환영 소켓
         try (ServerSocket welcomeSocket = new ServerSocket(port)){

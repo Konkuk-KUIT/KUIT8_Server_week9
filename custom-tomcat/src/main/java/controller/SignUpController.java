@@ -1,6 +1,7 @@
 package controller;
 
 import db.MemoryUserRepository;
+import db.Repository;
 import http.HttpMethod;
 import http.HttpRequest;
 import http.HttpResponse;
@@ -12,6 +13,12 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public class SignUpController implements Controller {
+    private final Repository repository;
+
+    public SignUpController(Repository repository) {
+        this.repository = repository;
+    }
+
     @Override
     public void execute(HttpRequest request, HttpResponse response) throws IOException {
         HttpMethod method = request.startLine().method();
@@ -34,7 +41,7 @@ public class SignUpController implements Controller {
                 params.get("name"),
                 params.get("email")
         );
-        MemoryUserRepository.getInstance().addUser(user);
+        repository.addUser(user);
 
         if (method == HttpMethod.POST) {
             response.redirect("/index.html");
