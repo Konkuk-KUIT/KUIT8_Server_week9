@@ -1,4 +1,9 @@
-package kuit8th.springmvc.DTO;
+package kuit8th.springmvc.dto;
 
-public record UserDTO() {
+public record UserDTO(
+        String userId,
+        String password,
+        String name,
+        String email
+) {
 }
