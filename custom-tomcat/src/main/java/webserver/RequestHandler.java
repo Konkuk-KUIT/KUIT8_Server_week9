@@ -27,7 +27,7 @@ public class RequestHandler implements Runnable{
 
             HttpRequest request = HttpRequest.from(br);   
             HttpResponse response = new HttpResponse(out);
-
+            //데스크에 넘기기만 하면 됨!
              requestMapper.proceed(request, response);
         } catch (IOException | RuntimeException e) {
             log.log(Level.SEVERE, e.getMessage());
