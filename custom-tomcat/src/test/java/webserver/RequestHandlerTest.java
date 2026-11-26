@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import support.HttpTestResponse;
+import support.TestRequestMapper;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -25,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Timeout(15)
 class RequestHandlerTest {
+    private static final RequestMapper REQUEST_MAPPER =
+            TestRequestMapper.create(MemoryUserRepository.getInstance());
+
     @Test
     void postSignupAndLoginAllowBothListRoutes() throws Exception {
         String id = UUID.randomUUID().toString();
@@ -188,7 +192,7 @@ class RequestHandlerTest {
             listener.setSoTimeout(5000);
             var handling = worker.submit(() -> {
                 try {
-                    new RequestHandler(listener.accept()).run();
+                    new RequestHandler(listener.accept(), REQUEST_MAPPER).run();
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }

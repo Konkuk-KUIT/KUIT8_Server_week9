@@ -10,6 +10,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class HttpResponse {
+    private static final Map<String, String> CONTENT_TYPES = Map.of(
+            "html", "text/html;charset=utf-8",
+            "css", "text/css",
+            "js", "text/javascript;charset=utf-8",
+            "png", "image/png",
+            "jpeg", "image/jpeg",
+            "jpg", "image/jpeg"
+    );
     private final DataOutputStream output;
     private final Path webRoot = Path.of("webapp").toAbsolutePath().normalize();
 
@@ -22,7 +30,7 @@ public class HttpResponse {
         if ("/".equals(path)) {
             path = "/index.html";
         }
-        if (!path.startsWith("/") || !(path.endsWith(".html") || path.endsWith(".css"))) {
+        if (!path.startsWith("/")) {
             notFound();
             return;
         }
@@ -39,10 +47,9 @@ public class HttpResponse {
         }
 
         byte[] body = Files.readAllBytes(filePath);
-        String contentType = "text/html;charset=utf-8";
-        if (path.endsWith(".css")) {
-            contentType = "text/css";
-        }
+        String fileName = filePath.getFileName().toString();
+        String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase(java.util.Locale.ROOT);
+        String contentType = CONTENT_TYPES.getOrDefault(extension, "application/octet-stream");
         Map<String, String> headers = new LinkedHashMap<>();
         headers.put("Content-Type", contentType);
         write(HttpStatus.OK, headers, body);

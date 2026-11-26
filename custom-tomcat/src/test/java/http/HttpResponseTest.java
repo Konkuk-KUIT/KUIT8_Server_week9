@@ -70,8 +70,8 @@ class HttpResponseTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/missing.html", "/css/missing.css", "/js/script.js", "/../webapp/index.html"})
-    void rejectsMissingUnsupportedAndParentPaths(String path) throws Exception {
+    @ValueSource(strings = {"/missing.html", "/css/missing.css", "/../webapp/index.html"})
+    void rejectsMissingAndParentPaths(String path) throws Exception {
         assertNotFound(forward(path));
     }
 
