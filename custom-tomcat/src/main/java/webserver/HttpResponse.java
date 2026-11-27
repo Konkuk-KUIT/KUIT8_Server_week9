@@ -15,16 +15,34 @@ public class HttpResponse {
 
     public void forward(Path file) throws IOException {
         byte[] body = Files.readAllBytes(file);
-        String contentType = file.getFileName().toString().endsWith(".css")
-                ? "text/css"
-                : "text/html";
+        String contentType = contentType(file);
 
         out.writeBytes(HttpStatus.OK.statusLine());
-        out.writeBytes("Content-Type: " + contentType + "; charset=UTF-8\r\n");
+        out.writeBytes("Content-Type: " + contentType + "\r\n");
         out.writeBytes("Content-Length: " + body.length + "\r\n");
         out.writeBytes("Connection: close\r\n");
         out.writeBytes("\r\n");
         out.write(body);
+        out.flush();
+    }
+
+    private String contentType(Path file) throws IOException {
+        String name = file.getFileName().toString();
+        if (name.endsWith(".css")) {
+            return "text/css; charset=UTF-8";
+        }
+        if (name.endsWith(".html")) {
+            return "text/html; charset=UTF-8";
+        }
+        String detectedType = Files.probeContentType(file);
+        return detectedType == null ? "application/octet-stream" : detectedType;
+    }
+
+    public void notFound() throws IOException {
+        out.writeBytes(HttpStatus.NOT_FOUND.statusLine());
+        out.writeBytes("Content-Length: 0\r\n");
+        out.writeBytes("Connection: close\r\n");
+        out.writeBytes("\r\n");
         out.flush();
     }
 
