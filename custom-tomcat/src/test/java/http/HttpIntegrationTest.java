@@ -1,9 +1,17 @@
 package http;
 
 import db.MemoryUserRepository;
+import controller.Controller;
+import controller.HomeController;
+import controller.ListController;
+import controller.LoginController;
+import controller.SignUpController;
+import controller.StaticFileController;
 import model.User;
 import org.junit.jupiter.api.Test;
 import webserver.RequestHandler;
+import webserver.RequestKey;
+import webserver.RequestMapper;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -13,11 +21,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class HttpIntegrationTest {
+    private static final Controller LIST_CONTROLLER = new ListController();
+    private static final RequestMapper MAPPER = new RequestMapper(Map.of(
+            new RequestKey(HttpMethod.GET, "/"), new HomeController(),
+            new RequestKey(HttpMethod.GET, "/user/userList"), LIST_CONTROLLER,
+            new RequestKey(HttpMethod.GET, "/user/list.html"), LIST_CONTROLLER,
+            new RequestKey(HttpMethod.POST, "/user/signup"), new SignUpController(MemoryUserRepository.getInstance()),
+            new RequestKey(HttpMethod.POST, "/user/login"), new LoginController(MemoryUserRepository.getInstance())
+    ), new StaticFileController());
+
     @Test
     void parsesGetMethodPathQueryAndCookies() throws Exception {
         HttpRequest request = parse("GET /user/list.html?name=Kim+Lee HTTP/1.1\r\n"
@@ -82,8 +100,42 @@ class HttpIntegrationTest {
 
     @Test
     void returnsHtmlAndCssWithExactBytesAndLength() throws Exception {
+        assertFileResponse(send("GET / HTTP/1.1\r\n\r\n"), "index.html", "text/html;charset=utf-8");
         assertFileResponse(send("GET /index.html HTTP/1.1\r\n\r\n"), "index.html", "text/html;charset=utf-8");
         assertFileResponse(send("GET /css/styles.css HTTP/1.1\r\n\r\n"), "css/styles.css", "text/css");
+    }
+
+    @Test
+    void queryStringPreservesHomeResponseAndListLoginCheck() throws Exception {
+        assertFileResponse(send("GET /?source=menu HTTP/1.1\r\n\r\n"), "index.html", "text/html;charset=utf-8");
+
+        Response response = send("GET /user/list.html?page=2 HTTP/1.1\r\n\r\n");
+        assertTrue(response.status.startsWith("HTTP/1.1 302"));
+        assertEquals("/user/login.html", response.header("Location"));
+    }
+
+    @Test
+    void unmappedFileWithQueryStringReturnsCss() throws Exception {
+        assertFileResponse(send("GET /css/styles.css?v=2 HTTP/1.1\r\n\r\n"), "css/styles.css", "text/css");
+    }
+
+    @Test
+    void missingFilesAndDirectoriesReturnNotFound() throws Exception {
+        for (String path : new String[] { "/missing-page", "/css/missing.css", "/user/", "/missing-page?name=test" }) {
+            assertNotFound(send("GET " + path + " HTTP/1.1\r\n\r\n"));
+        }
+    }
+
+    @Test
+    void unmappedPostReturnsNotFoundEvenWhenStaticFileExists() throws Exception {
+        for (String path : new String[] { "/unknown", "/index.html", "/css/styles.css", "/user/list.html" }) {
+            assertNotFound(send(post(path, "")));
+        }
+    }
+
+    @Test
+    void filesOutsideWebRootAreNotServed() throws Exception {
+        assertNotFound(send("GET /../build.gradle HTTP/1.1\r\n\r\n"));
     }
 
     @Test
@@ -93,6 +145,13 @@ class HttpIntegrationTest {
         assertTrue(response.status.startsWith("HTTP/1.1 302"));
         assertEquals("/index.html", response.header("Location"));
         assertEquals("secret", MemoryUserRepository.getInstance().findUserById(id).getPassword());
+    }
+
+    private static void assertNotFound(Response response) {
+        assertEquals("HTTP/1.1 404 Not Found", response.status);
+        assertEquals("text/plain;charset=utf-8", response.header("Content-Type"));
+        assertEquals(Integer.toString(response.body.length), response.header("Content-Length"));
+        assertEquals("404 Not Found", new String(response.body, StandardCharsets.UTF_8));
     }
 
     private static HttpRequest parse(String text) throws IOException {
@@ -115,7 +174,7 @@ class HttpIntegrationTest {
 
     private static Response send(String request) throws Exception {
         TestSocket socket = new TestSocket(request.getBytes(StandardCharsets.UTF_8));
-        new RequestHandler(socket).run();
+        new RequestHandler(socket, MAPPER).run();
         return new Response(socket.output.toByteArray());
     }
 

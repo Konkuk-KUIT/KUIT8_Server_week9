@@ -1,37 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="http.HttpIntegrationTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-20T14:32:50" hostname="BOOK-5OR5V2680N" time="0.113">
+<testsuite name="http.HttpIntegrationTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-27T11:23:32" hostname="BOOK-5OR5V2680N" time="0.325">
   <properties/>
-  <testcase name="wrongPasswordAndMissingUserRedirectToFailure()" classname="http.HttpIntegrationTest" time="0.064"/>
-  <testcase name="returnsHtmlAndCssWithExactBytesAndLength()" classname="http.HttpIntegrationTest" time="0.019"/>
-  <testcase name="listRoutesRequireCookieAndPermitLoggedInRequests()" classname="http.HttpIntegrationTest" time="0.013"/>
-  <testcase name="successfulLoginRedirectsAndSetsCookie()" classname="http.HttpIntegrationTest" time="0.003"/>
-  <testcase name="parsesGetMethodPathQueryAndCookies()" classname="http.HttpIntegrationTest" time="0.001"/>
-  <testcase name="postSignupStoresUserAndRedirects()" classname="http.HttpIntegrationTest" time="0.002"/>
-  <testcase name="parsesPostBodyUsingContentLengthHeaderCaseInsensitively()" classname="http.HttpIntegrationTest" time="0.004"/>
+  <testcase name="queryStringPreservesHomeResponseAndListLoginCheck()" classname="http.HttpIntegrationTest" time="0.172"/>
+  <testcase name="filesOutsideWebRootAreNotServed()" classname="http.HttpIntegrationTest" time="0.006"/>
+  <testcase name="wrongPasswordAndMissingUserRedirectToFailure()" classname="http.HttpIntegrationTest" time="0.03"/>
+  <testcase name="returnsHtmlAndCssWithExactBytesAndLength()" classname="http.HttpIntegrationTest" time="0.021"/>
+  <testcase name="listRoutesRequireCookieAndPermitLoggedInRequests()" classname="http.HttpIntegrationTest" time="0.021"/>
+  <testcase name="successfulLoginRedirectsAndSetsCookie()" classname="http.HttpIntegrationTest" time="0.005"/>
+  <testcase name="unmappedPostReturnsNotFoundEvenWhenStaticFileExists()" classname="http.HttpIntegrationTest" time="0.012"/>
+  <testcase name="parsesGetMethodPathQueryAndCookies()" classname="http.HttpIntegrationTest" time="0.003"/>
+  <testcase name="postSignupStoresUserAndRedirects()" classname="http.HttpIntegrationTest" time="0.004"/>
+  <testcase name="missingFilesAndDirectoriesReturnNotFound()" classname="http.HttpIntegrationTest" time="0.015"/>
+  <testcase name="parsesPostBodyUsingContentLengthHeaderCaseInsensitively()" classname="http.HttpIntegrationTest" time="0.002"/>
+  <testcase name="unmappedFileWithQueryStringReturnsCss()" classname="http.HttpIntegrationTest" time="0.011"/>
   <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+  <system-err><![CDATA[11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
-11월 20, 2026 11:32:50 오후 webserver.RequestHandler run
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
+정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
+11월 27, 2026 8:23:32 오후 webserver.RequestHandler run
 정보: New Client Connect! Connected IP : localhost/127.0.0.1, Port : 12345
 ]]></system-err>
 </testsuite>

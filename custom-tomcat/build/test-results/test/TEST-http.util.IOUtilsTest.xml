@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="http.util.IOUtilsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-20T14:32:50" hostname="BOOK-5OR5V2680N" time="0.007">
+<testsuite name="http.util.IOUtilsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-27T11:23:32" hostname="BOOK-5OR5V2680N" time="0.032">
   <properties/>
-  <testcase name="rejectsNegativeLengths()" classname="http.util.IOUtilsTest" time="0.0"/>
-  <testcase name="readsExactlyTheDeclaredLength()" classname="http.util.IOUtilsTest" time="0.0"/>
-  <testcase name="rejectsRawUnicodeOutsideTheSupportedBodyFormat()" classname="http.util.IOUtilsTest" time="0.002"/>
-  <testcase name="collectsFragmentedInput()" classname="http.util.IOUtilsTest" time="0.0"/>
+  <testcase name="rejectsNegativeLengths()" classname="http.util.IOUtilsTest" time="0.003"/>
+  <testcase name="readsExactlyTheDeclaredLength()" classname="http.util.IOUtilsTest" time="0.002"/>
+  <testcase name="rejectsRawUnicodeOutsideTheSupportedBodyFormat()" classname="http.util.IOUtilsTest" time="0.004"/>
+  <testcase name="collectsFragmentedInput()" classname="http.util.IOUtilsTest" time="0.008"/>
   <testcase name="allowsAnEmptyBodyWithoutConsumingInput()" classname="http.util.IOUtilsTest" time="0.001"/>
-  <testcase name="readsAndDecodesAnEncodedKoreanFormBody()" classname="http.util.IOUtilsTest" time="0.0"/>
-  <testcase name="rejectsAnIncompleteBody()" classname="http.util.IOUtilsTest" time="0.0"/>
-  <testcase name="readsFromTheSameReaderAfterHeaders()" classname="http.util.IOUtilsTest" time="0.0"/>
+  <testcase name="readsAndDecodesAnEncodedKoreanFormBody()" classname="http.util.IOUtilsTest" time="0.002"/>
+  <testcase name="rejectsAnIncompleteBody()" classname="http.util.IOUtilsTest" time="0.003"/>
+  <testcase name="readsFromTheSameReaderAfterHeaders()" classname="http.util.IOUtilsTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

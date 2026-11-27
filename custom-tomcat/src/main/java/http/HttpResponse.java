@@ -2,6 +2,7 @@ package http;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -30,7 +31,7 @@ public class HttpResponse {
             contentType = "text/css";
         }
 
-        dos.writeBytes("HTTP/1.1 200 OK\r\n");
+        writeStatusLine(HttpStatus.OK);
         dos.writeBytes("Content-Type: " + contentType + "\r\n");
 
         writeCookie();
@@ -43,7 +44,7 @@ public class HttpResponse {
 
     // 브라우저에 302와 이동할 주소를 보냄
     public void redirect(String path) throws IOException {
-        dos.writeBytes("HTTP/1.1 302 Found\r\n");
+        writeStatusLine(HttpStatus.FOUND);
         dos.writeBytes("Location: " + path + "\r\n");
 
         writeCookie();
@@ -51,6 +52,23 @@ public class HttpResponse {
         dos.writeBytes("Content-Length: 0\r\n");
         dos.writeBytes("\r\n");
         dos.flush();
+    }
+
+    // 파일이나 매핑을 찾지 못했을 때 404 응답을 보냄
+    public void notFound() throws IOException {
+        byte[] body = "404 Not Found".getBytes(StandardCharsets.UTF_8);
+
+        writeStatusLine(HttpStatus.NOT_FOUND);
+        dos.writeBytes("Content-Type: text/plain;charset=utf-8\r\n");
+        writeCookie();
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
+        dos.writeBytes("\r\n");
+        dos.write(body);
+        dos.flush();
+    }
+
+    private void writeStatusLine(HttpStatus status) throws IOException {
+        dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getReasonPhrase() + "\r\n");
     }
 
     // 저장된 쿠키가 있으면 응답 헤더에 씀
