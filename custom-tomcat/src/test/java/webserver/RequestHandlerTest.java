@@ -7,12 +7,35 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import controller.*;
+import db.MemoryUserRepository;
+import db.Repository;
+import http.HttpMethod;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestHandlerTest {
     private String send(String request) {
         TestSocket socket = new TestSocket(request);
-        new RequestHandler(socket).run();
+
+        Repository repository = MemoryUserRepository.getInstance();
+
+        RequestMapper requestMapper = new RequestMapper();
+
+        SignUpController signUpController = new SignUpController(repository);
+        LoginController loginController = new LoginController(repository);
+        ListController listController = new ListController();
+
+        requestMapper.register(HttpMethod.POST, "/user/signup", signUpController);
+        requestMapper.register(HttpMethod.POST, "/user/login", loginController);
+        requestMapper.register(HttpMethod.GET, "/user/userList", listController);
+        requestMapper.register(HttpMethod.GET, "/user/list.html", listController);
+
+        new RequestHandler(
+                socket,
+                requestMapper,
+                new StaticFileController()
+        ).run();
+
         return socket.output.toString(StandardCharsets.UTF_8);
     }
 
@@ -51,7 +74,6 @@ class RequestHandlerTest {
     }
 
     private static class TestSocket extends Socket {
-        // 실제 네트워크 연결 없이 요청을 넣고 응답을 확인한다.
         private final InputStream input;
         private final ByteArrayOutputStream output = new ByteArrayOutputStream();
 

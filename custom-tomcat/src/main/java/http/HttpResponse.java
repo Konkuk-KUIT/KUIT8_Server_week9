@@ -33,6 +33,11 @@ public class HttpResponse {
                         : requestedPath
         ).normalize();
 
+        // 파일 경로 존재하지 않는 경우 예외처리
+        if (!filePath.startsWith(WEB_ROOT) || !Files.isRegularFile(filePath)) {
+            sendNotFound();
+            return;
+        }
 
         byte[] body = Files.readAllBytes(filePath);
 
@@ -68,5 +73,9 @@ public class HttpResponse {
         out.writeBytes("\r\n");
         out.write(body);
         out.flush();
+    }
+
+    public void sendNotFound() throws IOException {
+        sendText(HttpStatus.NOT_FOUND, "Not Found");
     }
 }

@@ -1,11 +1,12 @@
 package webserver;
 
-import db.MemoryUserRepository;
+import controller.Controller;
+import controller.StaticFileController;
 import http.HttpMethod;
 import http.HttpRequest;
 import http.HttpResponse;
 import http.HttpStatus;
-import model.User;
+
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -18,22 +19,33 @@ import java.util.logging.Logger;
 
 public class RequestHandler implements Runnable {
 
-    private static final Logger log = Logger.getLogger(RequestHandler.class.getName());
+    private static final Logger log =
+            Logger.getLogger(RequestHandler.class.getName());
 
     private final Socket connection;
+    private final RequestMapper requestMapper;
+    private final StaticFileController staticFileController;
 
-    public RequestHandler(Socket connection) {
+    public RequestHandler(Socket connection,
+                          RequestMapper requestMapper,
+                          StaticFileController staticFileController) {
         this.connection = connection;
+        this.requestMapper = requestMapper;
+        this.staticFileController = staticFileController;
     }
 
     @Override
     public void run() {
-        log.info("Connected IP: " + connection.getInetAddress() + ", Port: " + connection.getPort());
+        log.info("Connected IP: " + connection.getInetAddress()
+                + ", Port: " + connection.getPort());
 
         try (Socket socket = connection;
              BufferedReader reader = new BufferedReader(
-                     new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-             DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
+                     new InputStreamReader(socket.getInputStream(),
+                             StandardCharsets.UTF_8));
+             DataOutputStream out =
+                     new DataOutputStream(socket.getOutputStream())) {
+
             HttpResponse response = new HttpResponse(out);
 
             try {
@@ -48,74 +60,21 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void route(HttpRequest request, HttpResponse response) throws IOException {
+    private void route(HttpRequest request, HttpResponse response)
+            throws IOException {
 
-        String path = request.getPath();
-        HttpMethod method = request.getMethod();
+        Controller controller = requestMapper.findController(request);
 
-        if (method == HttpMethod.POST && path.equals("/user/signup")) {
-            handleSignup(request, response);
+        if (controller != null) {
+            controller.execute(request, response);
             return;
         }
 
-        if (method == HttpMethod.POST && path.equals("/user/login")) {
-            handleLogin(request, response);
+        if (request.getMethod() == HttpMethod.GET) {
+            staticFileController.execute(request, response);
             return;
         }
 
-        if (method == HttpMethod.GET && (path.equals("/user/userList") || path.equals("/user/list.html"))) {
-
-            if (request.isLoggedIn()) {
-                response.forward("/user/list.html");
-            } else {
-                response.redirect("/user/login.html");
-            }
-
-            return;
-        }
-
-        if (method == HttpMethod.GET) {
-            response.forward(path);
-            return;
-        }
-
-        response.sendText(HttpStatus.NOT_FOUND, "Not Found");
-    }
-
-    private void handleSignup(HttpRequest request, HttpResponse response) throws IOException {
-
-        String userId = request.getParameter("userId");
-        String password = request.getParameter("password");
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-
-        if (isBlank(userId) || isBlank(password) || isBlank(name) || isBlank(email)) {
-            response.sendText(HttpStatus.BAD_REQUEST, "빈칸을 확인해주세요");
-            return;
-        }
-
-        User user = new User(userId, password, name, email);
-        MemoryUserRepository.getInstance().addUser(user);
-
-        response.redirect("/index.html");
-    }
-
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
-    }
-
-    private void handleLogin(HttpRequest request, HttpResponse response) throws IOException {
-
-        String userId = request.getParameter("userId");
-        String password = request.getParameter("password");
-
-        User user = userId == null ? null : MemoryUserRepository.getInstance().findUserById(userId);
-
-        if (user != null && user.getPassword().equals(password)) {
-            response.addHeader("Set-Cookie", "logined=true; Path=/");
-            response.redirect("/index.html");
-        } else {
-            response.redirect("/user/login_failed.html");
-        }
+        response.sendNotFound();
     }
 }
