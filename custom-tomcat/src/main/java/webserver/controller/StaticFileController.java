@@ -1,0 +1,17 @@
+package webserver.controller;
+
+import webserver.HttpRequest;
+import webserver.HttpResponse;
+
+import java.io.IOException;
+
+public class StaticFileController implements Controller{
+    @Override
+    public void execute(HttpRequest request, HttpResponse response) throws IOException {
+            String url = request.getUrl();
+            if(url.equals("/")){
+                url = "/index.html";
+            }
+            response.forward(url);
+    }
+}
