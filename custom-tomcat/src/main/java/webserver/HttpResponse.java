@@ -42,6 +42,7 @@ public class HttpResponse {
         send(HttpStatus.FOUND, new byte[0]);
     }
 
+    //404 + NotFound
     public void notFound() throws IOException {
         send(HttpStatus.NOT_FOUND, new byte[0]);
     }

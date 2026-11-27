@@ -1,23 +1,19 @@
 package webserver;
 
-import http.HttpMethod;
-import http.ContentType;
-
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class RequestHandler implements Runnable{
     Socket connection;
+    RequestMapper mapper;
     private static final Logger log = Logger.getLogger(RequestHandler.class.getName());
 
-    public RequestHandler(Socket connection) {
+    public RequestHandler(Socket connection, RequestMapper mapper) {
         this.connection = connection;
+        this.mapper = mapper;
     }
 
     @Override
@@ -32,7 +28,7 @@ public class RequestHandler implements Runnable{
 
             //응답 객체
             HttpResponse response = new HttpResponse(dos);
-            RequestMapper.getController(request.getUrl()).execute(request, response);
+            mapper.getController(request).execute(request, response);
 
         } catch (IOException e) {
             log.log(Level.SEVERE,e.getMessage());

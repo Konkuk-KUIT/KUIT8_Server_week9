@@ -1,21 +1,23 @@
 package webserver;
 
-import webserver.controller.*;
+import db.MemoryUserRepository;
+import http.HttpMethod;
+import  webserver.controller.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RequestMapper {
-    private static final Map<String, Controller> controllers = new HashMap<>();
-    private static final Controller defaultController = new ForwardController();
 
-    static {
-        controllers.put("/user/signup", new SignUpController());
-        controllers.put("/user/login", new LoginController());
-        controllers.put("/user/userList", new ListController());
-        controllers.put("/user/list.html", new ListController());
+    private final Map<RequestKey, Controller> controllers;
+    private final Controller defaultController;
+    public RequestMapper(Map<RequestKey, Controller> controllers, Controller defaultController){
+        this.controllers = controllers;
+        this.defaultController = defaultController;
     }
 
-    public static Controller getController(String url) {
-        return controllers.getOrDefault(url, defaultController);
+    public Controller getController(HttpRequest request) {
+        RequestKey key = new RequestKey(request.getMethod(), request.getUrl());
+        return controllers.getOrDefault(key, defaultController);
     }
+
 }
