@@ -26,7 +26,7 @@ public class UserApiController {
     @GetMapping("/api/users")
     public ResponseEntity<List<String>> users(HttpServletRequest request){
         if(!isLogined(request)){
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<String> names = repository.findAll().stream().map(User::getName).toList();
         return ResponseEntity.ok(names);
