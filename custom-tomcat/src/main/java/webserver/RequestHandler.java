@@ -6,19 +6,18 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import db.MemoryUserRepository;
-import http.HttpMethod;
 import http.HttpRequest;
 import http.HttpResponse;
-import model.User;
 
 public class RequestHandler implements Runnable {
-    Socket connection;
+    private final Socket connection;
+    private final RequestMapper requestMapper;
     private static final Logger log =
             Logger.getLogger(RequestHandler.class.getName());
 
-    public RequestHandler(Socket connection) {
+    public RequestHandler(Socket connection, RequestMapper requestMapper) {
         this.connection = connection;
+        this.requestMapper = requestMapper;
     }
 
     @Override
@@ -36,56 +35,7 @@ public class RequestHandler implements Runnable {
             HttpRequest request = HttpRequest.from(br);
             HttpResponse response = new HttpResponse(dos);
 
-            HttpMethod method = request.getMethod();
-            String path = request.getPath();
-
-            // 회원가입
-            if (path.equals("/user/signup")
-                    && (method == HttpMethod.GET || method == HttpMethod.POST)) {
-
-                User user = new User(
-                        request.getParameter("userId"),
-                        request.getParameter("password"),
-                        request.getParameter("name"),
-                        request.getParameter("email")
-                );
-
-                MemoryUserRepository.getInstance().addUser(user);
-                response.redirect("/index.html");
-                return;
-            }
-
-            // 로그인
-            if (path.equals("/user/login") && method == HttpMethod.POST) {
-                String userId = request.getParameter("userId");
-
-                User user = userId == null ? null :
-                        MemoryUserRepository.getInstance().findUserById(userId);
-
-                if (user != null
-                        && user.getPassword().equals(request.getParameter("password"))) {
-                    response.redirect("/index.html", "logined=true; Path=/");
-                } else {
-                    response.redirect("/user/login_failed.html");
-                }
-                return;
-            }
-
-            // 사용자 목록 접근 제어
-            if (path.equals("/user/userList") || path.equals("/user/list.html")) {
-                if (!request.isLogined()) {
-                    response.redirect("/user/login.html");
-                    return;
-                }
-
-                path = "/user/list.html";
-            }
-
-            if (path.equals("/")) {
-                path = "/index.html";
-            }
-
-            response.forward(path);
+            requestMapper.dispatch(request, response);
 
         } catch (IOException | IllegalArgumentException e) {
             log.log(Level.SEVERE, e.getMessage());

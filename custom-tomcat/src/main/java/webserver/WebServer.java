@@ -1,5 +1,10 @@
 package webserver;
 
+import controller.*;
+import db.MemoryUserRepository;
+import db.Repository;
+import http.HttpMethod;
+import java.util.Map;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,6 +25,22 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        Repository repository = MemoryUserRepository.getInstance();
+        HomeController homeController = new HomeController();
+        SignUpController signUpController = new SignUpController(repository);
+        LoginController loginController = new LoginController(repository);
+        ListController listController = new ListController();
+        StaticFileController staticFileController = new StaticFileController();
+        NotFoundController notFoundController = new NotFoundController();
+        RequestMapper requestMapper = new RequestMapper(Map.of(
+                new RequestKey(HttpMethod.GET, "/"), homeController,
+                new RequestKey(HttpMethod.GET, "/index.html"), homeController,
+                new RequestKey(HttpMethod.POST, "/user/signup"), signUpController,
+                new RequestKey(HttpMethod.POST, "/user/login"), loginController,
+                new RequestKey(HttpMethod.GET, "/user/userList"), listController,
+                new RequestKey(HttpMethod.GET, "/user/list.html"), listController
+        ), staticFileController, notFoundController);
+
         // TCP 환영 소켓
         try (ServerSocket welcomeSocket = new ServerSocket(port)){
 
@@ -27,7 +48,7 @@ public class WebServer {
             Socket connection;
             while ((connection = welcomeSocket.accept()) != null) {
                 // 스레드에 작업 전달
-                service.submit(new RequestHandler(connection));
+                service.submit(new RequestHandler(connection, requestMapper));
             }
         }
 

@@ -28,6 +28,14 @@ public class HttpResponse {
         dos.flush();
     }
 
+    public void notFound() throws IOException {
+        dos.writeBytes("HTTP/1.1 " + HttpStatus.NOT_FOUND.getValue() + "\r\n");
+        dos.writeBytes("Content-Length: 0\r\n");
+        dos.writeBytes("Connection: close\r\n");
+        dos.writeBytes("\r\n");
+        dos.flush();
+    }
+
     public void redirect(String path) throws IOException {
         redirect(path, null);
     }
