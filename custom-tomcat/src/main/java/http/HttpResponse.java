@@ -23,6 +23,12 @@ public class HttpResponse {
         dos.flush();
     }
 
+    public void notFound() throws IOException {
+        dos.writeBytes("HTTP/1.1 "+HttpStatus.NOT_FOUND+"\r\n");
+        dos.writeBytes("Content-Length: 0\r\nConnection: close\r\n\r\n");
+        dos.flush();
+    }
+
     public void redirect(String location) throws IOException {
         redirect(location, null);
     }
