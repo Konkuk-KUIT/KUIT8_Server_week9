@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="http.util.HttpRequestUtilsTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-20T14:32:50" hostname="BOOK-5OR5V2680N" time="0.014">
+  <properties/>
+  <testcase name="splitsBeforeDecodingAndKeepsEqualsInsideValues()" classname="http.util.HttpRequestUtilsTest" time="0.0"/>
+  <testcase name="decodesKoreanSpaceEmailAndLiteralPlus()" classname="http.util.HttpRequestUtilsTest" time="0.001"/>
+  <testcase name="parsesOrdinaryFormFields()" classname="http.util.HttpRequestUtilsTest" time="0.001"/>
+  <testcase name="rejectsDuplicateDecodedNames()" classname="http.util.HttpRequestUtilsTest" time="0.001"/>
+  <testcase name="preservesEmptyValuesAndOtherFields()" classname="http.util.HttpRequestUtilsTest" time="0.0"/>
+  <testcase name="decodesParameterNames()" classname="http.util.HttpRequestUtilsTest" time="0.001"/>
+  <testcase name="rejectsEmptyNames()" classname="http.util.HttpRequestUtilsTest" time="0.0"/>
+  <testcase name="rejectsMalformedPercentEscapesInsteadOfReturningAnEmptyMap()" classname="http.util.HttpRequestUtilsTest" time="0.001"/>
+  <testcase name="decodesOnlyOnce()" classname="http.util.HttpRequestUtilsTest" time="0.001"/>
+  <testcase name="acceptsNoParametersAndIgnoresEmptySegments()" classname="http.util.HttpRequestUtilsTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
